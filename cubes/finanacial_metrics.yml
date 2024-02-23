@@ -1,0 +1,159 @@
+#cubes:
+#  - name: order_customer_retention
+#    sql_table: thewhitewillow_ocular_production.fact_order_item
+#    data_source: default
+#
+#    dimensions:
+#      - name: order_id
+#        sql: order_id
+#        type: string
+#
+#      - name: order_item_id
+#        sql: order_item_id
+#        type: string
+#
+#      - name: marketplace
+#        sql: marketplace
+#        type: string
+#
+#      - name: item_quantity
+#        sql: item_quantity
+#        type: number
+#
+#      - name: order_quantity
+#        sql: order_quantity
+#        type: number
+#
+#      - name: payment_gateway
+#        sql: payment_gateway
+#        type: string
+#
+#      - name: item_price
+#        sql: item_price
+#        type: number
+#
+#      - name: order_price
+#        sql: order_price
+#        type: number
+#
+#      - name: item_total_discount
+#        sql: item_total_discount
+#        type: number
+#
+#      - name: order_discounts
+#        sql: order_discounts
+#        type: number
+#
+#      - name: item_tax
+#        sql: item_tax
+#        type: number
+#
+#      - name: order_tax_total
+#        sql: order_tax_total
+#        type: number
+#
+#      - name: order_item_shipping_fee
+#        sql: order_item_shipping_fee
+#        type: number
+#
+#      - name: shipping_total
+#        sql: shipping_total
+#        type: number
+#
+#      - name: shipping_pincode
+#        sql: shipping_pincode
+#        type: string
+#
+#      - name: shipping_state
+#        sql: shipping_state
+#        type: string
+#
+#      - name: shipping_city
+#        sql: shipping_city
+#        type: string
+#
+#      - name: sku_name
+#        sql: sku_name
+#        type: string
+#
+#      - name: order_refund
+#        sql: order_refund
+#        type: number
+#
+#      - name: asin
+#        sql: asin
+#        type: string
+#
+#      - name: product_name
+#        sql: product_name
+#        type: string
+#
+#      - name: item_cost
+#        sql: item_cost
+#        type: number
+#
+#      - name: fulfillment_channel
+#        sql: fulfillment_channel
+#        type: string
+#
+#      - name: customer_id
+#        sql: customer_id
+#        type: string
+#
+#      - name: customer_created_at
+#        sql: customer_created_at
+#        type: time
+#
+#      - name: order_date
+#        sql: order_date
+#        type: time
+#
+#      - name: order_month
+#        sql:  "extract(month from {order_date})"
+#        type: number
+#
+#      - name: customer_create_month
+#        sql: "extract(month from {customer_created_at})"
+#        type: number
+#
+#      - name: order_year
+#        sql:  "extract(year from {order_date})"
+#        type: number
+#
+#      - name: customer_created_year
+#        sql: "extract(year from {customer_created_at})"
+#        type: number
+#
+#    measures:
+#      - name: order_count
+#        sql : order_id
+#        type: count_distinct
+#
+#      - name : customer_count
+#        sql : customer_id
+#        type : count_distinct
+#        drill_members:
+#          - customer_id
+#
+#      - name: revenue
+#        sql: "sum({item_price}*{item_quantity})"
+#        type: number
+#
+#      - name: percent_of_revenue
+#        sql: "({revenue}/ (case when {customer_create_month} = 1 and {order_month} = 1 then {revenue} end))*100"
+#        type: number
+#
+#      - name: product_margin
+#        sql: "case when sum({item_price}*{item_quantity}) > 0
+#              then 100 * sum({item_price}*{item_quantity} - {item_cost}*{item_quantity})/sum({item_price}*{item_quantity}) end"
+#        type: number
+#
+#      - name: gross_margin
+#        sql: "case when sum({item_price}*{item_quantity}) > 0
+#              then 100 * sum({item_price}*{item_quantity} - {order_discounts} - {item_cost}*{item_quantity})/sum({item_price}*{item_quantity}) end"
+#        type: number
+#
+#      - name: contribution_margin
+#        sql: "case when sum({item_price}*{item_quantity}) > 0
+#              then 100 * sum({item_price}*{item_quantity} - {order_discounts} - {order_item_shipping_fee} - {item_cost}*{item_quantity})/sum({item_price}*{item_quantity}) end"
+#        type: number

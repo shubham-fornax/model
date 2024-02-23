@@ -1,0 +1,79 @@
+#cubes:
+#
+#  - name: customer_first_order
+#    sql: >
+#      with first_order_details_per_customer as (
+#
+#        select customer_id, sku_name, dp.product_name, dp.category, dense_rank() over (partition by customer_id order by order_date asc) as rn
+#        from thewhitewillow_ocular_production.fact_order_item as foi
+#        left join thewhitewillow_ocular_gsheets_integration.dim_products as dp
+#        on foi.sku_name = dp.sku )
+#
+#      select * from first_order_details_per_customer where rn  = 1
+#
+#    joins:
+#
+#      - name: retention
+#        relationship: one_to_many
+#        sql: "{CUBE}.customer_id = {retention.customer_id}"
+#
+#
+#    dimensions:
+#
+#      - name: customer_id
+#        sql: "distinct customer_id"
+#        type: string
+#
+#      - name: product_name
+#        sql: product_name
+#        type: string
+#
+#      - name: category
+#        sql: catgeory
+#        type: string
+#
+#      - name: sku_name
+#        sql: sku_name
+#        type: string
+#
+#    measures:
+#
+#      - name: customer_count
+#        sql: customer_id
+#        type: countDistinct
+#
+#  - name: retention
+#    sql: >
+#      select distinct * from thewhitewillow_ocular_production.fact_order_item
+#    description: This cube contains necessary measure and dimensions for order and customer retention profiles.
+#      It is built on fact_order_item and the customer level information is fetched by performing a join with the
+#      dim_customer_profile table, on customer_id.
+#    data_source: default
+#
+#    measures:
+#
+#      - name: count_order_id
+#        sql: order_id
+#        description: The count of order_ids.
+#        type: count
+#
+#    dimensions:
+#
+#      - name: order_id
+#        sql: order_id
+#        type: string
+#
+#      - name: order_date
+#        sql: order_date
+#        type: time
+#
+#      - name: customer_id
+#        sql: customer_id
+#        type: string
+#
+#      - name: composite_key
+#        sql: CONCAT(order_id, '-', order_item)
+#        description: A composite_key to act as a primary key. Based on the smallest grain - order_id and order_item_id
+#        type: string
+#        primary_key: true
+#

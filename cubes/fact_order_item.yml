@@ -1,0 +1,252 @@
+#cubes:
+#  - name: fact_order_item
+#    sql: >
+#          SELECT
+#                  *,
+#                  row_number() OVER (ORDER BY order_date ASC) AS row_number_order_date_asc
+#                FROM
+#                  thewhitewillow_ocular_production.fact_order_item
+#
+#    joins:
+#      - name: fact_shipping
+#        relationship: one_to_one
+#        sql: "cast({CUBE}.order_id as string) = {fact_shipping.order_id}"
+#
+#
+##        dimensions:
+##          - order_id
+##        measures:
+##          - row_number_order_date_asc
+##        sql: >
+##          SELECT
+##            order_id,
+##            row_number() OVER (PARTITION BY order_id ORDER BY order_date ASC) AS row_number_order_date_asc
+##          FROM
+##            ocular_reports.fact_order_item
+#
+#    dimensions:
+#      - name: order_id
+#        sql: "{CUBE}.order_id"
+#        type: string
+#        primary_key: true
+#
+#      - name: order_item_id
+#        sql: order_item_id
+#        type: string
+#
+#      - name: delivery_date
+#        sql: "{fact_shipping.delivery_date}"
+#        type: string
+#
+#      - name: simplified_status
+#        sql: "{fact_shipping.simplified_status}"
+#        type: string
+#
+#      - name: distinct_simplified_status
+#        sql: "distinct {fact_shipping.simplified_status}"
+#        type: string
+#
+#
+#      - name: marketplace
+#        sql: marketplace
+#        type: string
+#
+#      - name: distinct_markeplace
+#        sql: distinct marketplace
+#        type: string
+#
+#      - name: item_quantity
+#        sql: item_quantity
+#        type: string
+#
+#      - name: order_quantity
+#        sql: order_quantity
+#        type: string
+#
+#      - name: payment_gateway
+#        sql: payment_gateway
+#        type: string
+#
+#      - name: item_price
+#        sql: item_price
+#        type: number
+#
+#      - name: order_price
+#        sql: order_price
+#        type: string
+#
+#      - name: item_total_discount
+#        sql: item_total_discount
+#        type: string
+#
+#      - name: order_discounts
+#        sql: order_discounts
+#        type: string
+#
+#      - name: item_tax
+#        sql: item_tax
+#        type: string
+#
+#      - name: order_tax_total
+#        sql: order_tax_total
+#        type: string
+#
+#      - name: item_cost
+#        sql: item_cost
+#        type: string
+#
+#      - name: order_cost
+#        sql: order_cost
+#        type: string
+#
+#      - name: order_item_shipping_fee
+#        sql: order_item_shipping_fee
+#        type: string
+#
+#      - name: shipping_total
+#        sql: shipping_total
+#        type: string
+#
+#      - name: shipping_pincode
+#        sql: shipping_pincode
+#        type: string
+#
+#      - name: shipping_state
+#        sql: shipping_state
+#        type: string
+#
+#      - name: shipping_city
+#        sql: shipping_city
+#        type: string
+#
+#      - name: distinct_shipping_city
+#        sql: distinct shipping_city
+#        type: string
+#
+#      - name: sku_name
+#        sql: sku_name
+#        type: string
+#
+#      - name: order_refund
+#        sql: order_refund
+#        type: string
+#
+#      - name: asin
+#        sql: asin
+#        type: string
+#
+#      - name: product_name
+#        sql: product_name
+#        type: string
+#
+#      - name: distinct_product_name
+#        sql: distinct product_name
+#        type: string
+#
+#      - name: category
+#        sql: category
+#        type: string
+#
+#      - name: distinct_category
+#        sql: distinct category
+#        type: string
+#
+#      - name: sub_category
+#        sql: sub_category
+#        type: string
+#
+#      - name: fulfillment_channel
+#        sql: fulfillment_channel
+#        type: string
+#
+#      - name: customer_id
+#        sql: customer_id
+#        type: string
+#
+#      - name: customer_created_at
+#        sql: customer_created_at
+#        type: time
+#
+#      - name: order_date
+#        sql: order_date
+#        type: time
+#
+#      - name: row_number_order_date_asc
+#        sql: row_number_order_date_asc
+#        type: number
+#
+##      - name: row_number_order_date_asc
+##        sql: >
+##         row_number() over (partition by order_id order by order_date asc)
+##        type: number
+#
+#    measures:
+#      - name: sales
+#        sql: "case when round(sum(item_price), 2) is null then 0 else round(sum(item_price), 2) end"
+#        type: number
+#
+#      - name: orders
+#        sql: "case when round(count(distinct ({CUBE}.order_id)), 2) is null then 0 else round(sum({CUBE}.order_id), 2) end"
+#        type: number
+#
+#      - name: costs
+#        sql: "case when round(sum(item_cost),2) is null then 0 else round(sum(item_cost),2) end"
+#        type: number
+#
+#      - name: qty_sold
+#        sql: " case when round(sum(item_quantity),2) is null then 0 else round(sum(item_quantity),2) end"
+#        type: number
+#
+#      - name: daily_average_quantity
+#        sql: "case when round(sum(item_quantity)/count(distinct date_trunc(order_date, day)),2) is null then 0 else round(sum(item_quantity)/count(distinct date_trunc(order_date, day)),2) end"
+#        type: number
+#
+#      - name: average_selling_price
+#        sql: "case when {qty_sold} in (null, 0) then 0
+#                   when {sales}/{qty_sold} is null then 0
+#                   else {sales}/{qty_sold} end "
+#        type: number
+#
+#
+#
+#
+#
+#  - name: fact_shipping
+#    sql_table: thewhitewillow_ocular_production.fact_shipping
+#    data_source: default
+#
+#    joins: []
+#
+#    dimensions:
+#      - name: order_id
+#        sql: order_id
+#        type: string
+#
+#      - name: shipping_status
+#        sql: shipping_status
+#        type: string
+#
+#      - name: simplified_status
+#        sql: simplified_status
+#        type: string
+#
+#      - name: shipping_fee
+#        sql: shipping_fee
+#        type: number
+#
+#      - name: weight
+#        sql: weight
+#        type: number
+#
+#      - name: delivery_date
+#        sql: delivery_date
+#        type: string
+#
+#      - name: courier_partner
+#        sql: courier_partner
+#        type: string
+#
+#    measures:
+#
+#
+#

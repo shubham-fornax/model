@@ -1,0 +1,368 @@
+#cubes:
+#  - name: margin
+#    sql_table: ocular_reports.fact_order_item_tww_margin
+#
+#    joins:
+#
+#      - name: dim_customer_profile
+#        relationship: many_to_one
+#        sql: "`cast({CUBE}.customer_id as string) = {dim_customer_profile.customer_id}`"
+#
+#      - name: dim_date_customer_created
+#        relationship: many_to_one
+#        sql: "cast({CUBE}.customer_created_at as date) = {dim_date_customer_created.full_date}"
+#
+#      - name: dim_date_orders
+#        relationship: many_to_one
+#        sql: "cast({CUBE}.order_date as date) = {dim_date_orders.full_date}"
+#
+#    dimensions:
+#
+#      - name: composite_key
+#        sql: CONCAT(order_id, '-', order_item)
+#        description: A composite_key to act as a primary key. Based on the smallest grain - order_id and order_item_id
+#        type: string
+#        primary_key: true
+#
+#      - name: order_id
+#        sql: order_id
+#        type: number
+#
+#      - name: order_item_id
+#        sql: order_item_id
+#        type: string
+#
+#      - name: marketplace
+#        sql: marketplace
+#        type: string
+#
+#      - name: sku_name
+#        sql: sku_name
+#        type: string
+#
+#      - name: item_price
+#        sql: item_price
+#        type: number
+#        description: item_price of the SKU in the order. It is calculated as price_per_sku * item_quantity
+#
+#      - name: item_cost
+#        sql: item_cost
+#        type: number
+#        description: item_cost of the SKU in the order. It is calculated as COGS_per_sku * item_quantity.
+#
+#      - name: order_date
+#        sql: order_date
+#        description: The timestamp when the order was placed on the marketplace website.
+#        type: time
+#
+#      - name: order_week
+#        sql: "{dim_date_orders.year_week}"
+#        description: The week number when the order was placed.  This is extracted from the order_date column.
+#        type: number
+#
+#      - name: order_month
+#        sql: "{dim_date_orders.month}"
+#        description: The month number when the order was placed.  This is extracted from the order_date column.
+#        type: number
+#
+#      - name: order_quarter
+#        sql: "{dim_date_orders.calender_quarter}"
+#        description: The quarter number when the order was placed.  This is extracted from the order_date column.
+#        type: number
+#
+#      - name: order_year
+#        sql: "{dim_date_orders.calender_year}"
+#        description: The year number when the order was placed.  This is extracted from the order_date column.
+#        type: number
+#
+#      - name: customer_created_at
+#        sql: customer_created_at
+#        description: The timestamp when a particular customer was created on the website of the marketplace.
+#        type: time
+#
+#      - name: first_order_date
+#        sql: "{dim_customer_profile.first_order_date}"
+#        description: This is the date when the first order was made by that particular customer. It is fetched from dim_customer_profile table
+#        type: time
+#
+#      - name: first_order_week
+#        sql: "{dim_date_customer_first_order.year_week}"
+#        description: This is the week when the first order was made by that particular customer. It is fetched from dim_customer_profile table
+#        type: number
+#
+#      - name: first_order_month
+#        sql: "{dim_date_customer_first_order.month}"
+#        description: This is the month when the first order was made by that particular customer. It is fetched from dim_customer_profile table.
+#        type: number
+#
+#      - name: first_order_quarter
+#        sql: "{dim_date_customer_first_order.calender_quarter}"
+#        description: This is the quarter when the first order was made by that particular customer. It is fetched from dim_customer_profile table.
+#        type: number
+#
+#      - name: first_order_year
+#        sql: "{dim_date_customer_first_order.calender_year}"
+#        description: This is the year when the first order was made by that particular customer. It is fetched from dim_customer_profile table
+#        type: number
+#
+#      - name: product_name
+#        sql: product_name
+#        description: The name of the product.
+#        type: number
+#
+#      - name: category
+#        sql: category
+#        description: The main category to which the items in this order belong.
+#        type: string
+#
+#      - name: sub_category
+#        sql: sub_category
+#        description: The sub-category to which the items in this order belong.
+#        type: string
+#
+#      - name: retention_quarter
+#        sql: " 4*({dim_date_orders.calender_year} - {dim_date_customer_first_order.calender_year}) + ({dim_date_orders.calender_quarter} - {dim_date_customer_first_order.calender_quarter} )"
+#        description: The numeric difference between the starting quarter of the cohort and the order quarter
+#        type: number
+#
+#      - name: retention_month
+#        sql: " 12*({dim_date_orders.calender_year} - {dim_date_customer_first_order.calender_year}) + ({dim_date_orders.month} - {dim_date_customer_first_order.month} )"
+#        description: The numeric difference between the starting month of the cohort and the order month
+#        type: number
+#
+#      - name: retention_week
+#        sql: " 52*({dim_date_orders.calender_year} - {dim_date_customer_first_order.calender_year}) + ({dim_date_orders.year_week} - {dim_date_customer_first_order.year_week})"
+#        description: The numeric difference between the starting week of the cohort and the order week
+#        type: number
+#
+#      - name: age_month_year
+#        sql: "{dim_date_customer_first_order.month_year_combo}"
+#        description: The month-year extracted from the first order date column. This column contains the cohort definition.
+#        type: string
+#
+#      - name: age_week_year
+#        sql: "{dim_date_customer_first_order.week_year_combo}"
+#        description: The week-year extracted from the first order date column . This column contains the cohort definition.
+#        type: string
+#
+#      - name: age_quarter_year
+#        sql: "{dim_date_customer_first_order.quarter_year_combo}"
+#        description: The quarter-year extracted from the first order date column . This column contains the cohort definition.
+#        type: string
+#
+#
+#    measures:
+##      - name: cum_cust_count
+##        sql: "sum({item_price}) over ( order by {order_month} desc) "
+##        type: number
+#
+#      - name: runnning_revenue
+#        sql: total_revenue
+#        type: sum
+#        rolling_window:
+#          trailing: unbounded
+#          offset: start
+#
+##      - name: x
+##        sql: "{CUBE}.total_revenue"
+##        type: sum
+#
+#
+#      - name: order_count
+#        sql: order_id
+#        type: countDistinct
+#
+#      - name: total_revenue
+#        sql: "case when sum(item_price) != 0 then sum(item_price) end"
+#        type: number
+#        description: This is the actual revenue inclusive of tax exclusive after discount. Note- in FOI, the item_price is calculated using actual qty
+#
+#      - name: total_cost
+#        sql: "case when sum(item_cost) != 0 then sum(item_cost) end"
+#        type: number
+#        description: This is the total cost (COGS) for an SKU over the aggregation period.  Note- in FOI, the item_cost is calculated using actual qty
+#
+#      - name: total_shipping_fee
+#        sql: "case when sum(item_shipping_fee) != 0 then sum(item_shipping_fee) end"
+#        type: number
+#        description: This is the total shipping fee for an SKU over the aggregation period.  Note- in FOI, the item_shipping_fee is calculated using actual qty
+#
+#      - name: total_discount
+#        sql: "case when sum(item_discount) != 0 then sum(item_discount) end"
+#        type: number
+#        description: This is the total_discount over the aggregation period and specified filters. Note - In FOI, the column item_discount is calculated using actual qty
+#
+#
+#      - name: product_margin
+#        sql: "(({total_revenue} - {total_cost})/{total_revenue}) * 100"
+#        type: number
+#        description: This is the product margin. It is calculated as the ratio of the difference in revenue generated and the cost of that sku with the revenue of that sku over a particular agg period
+#
+#      - name: gross_margin
+#        sql: "(({total_revenue} - {total_cost} - {total_shipping_fee})/{total_revenue}) * 100"
+#        type: number
+#        description: This is the gross margin. It is calculated as the ratio of the difference in revenue generated and the cost of that sku and the shipping charges with the revenue of that sku over a particular agg period
+#
+#      - name: contribution_margin
+#        sql: "(({total_revenue} - {total_cost} - {total_shipping_fee} - {total_discount})/{total_revenue}) * 100"
+#        type: number
+#        description: This is the contribution margin. It is calculated as the ratio of the difference in revenue generated, cost of that sku, the shipping charges and the total discount with the revenue of that sku over a particular agg period
+#
+#      - name: contributed_revenue
+#        sql: "({total_revenue} - {total_cost} - {total_shipping_fee} - {total_discount})"
+#        type: number
+#        rolling_window:
+#          trailing: unbounded
+#
+#      - name: contributed_revenue_rolling
+#        sql: "sum({contributed_revenue}) over (order by margin__retention_month ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)"
+#        type: number
+#
+#  - name: dim_customer_profile
+#    sql_table: ocular_reports.dim_customer_profile
+#    description: This cube contains relevant customer info for customer and order retention analysis
+#    data_source: default
+#
+#    joins:
+#
+#      - name: dim_date_customer_first_order
+#        relationship: many_to_one
+#        sql: "cast({dim_customer_profile.first_order_date} as date) = {dim_date_customer_first_order.full_date}"
+#
+#    dimensions:
+#      - name: customer_id
+#        sql: customer_id
+#        type: string
+#
+#      - name: first_order_date
+#        sql: first_order_date
+#        type: time
+#
+#      - name: proxy_first_order_month
+#        sql: "extract(month from first_order_date)"
+#        type: time
+#
+#      - name: total_amount_spent_till_date
+#        sql: total_amount_spent_till_date
+#        type: number
+#
+#  - name: dim_date_orders
+#    sql_table: ocular_reports.dim_date
+#    sql_alias: dim_date_orders
+#    description: This table contains the dimensional information about the date.
+#
+#    dimensions:
+#      - name: calender_year
+#        sql: calender_year
+#        type: number
+#
+#      - name: month
+#        sql: month
+#        type: number
+#
+#      - name: year_week
+#        sql: year_week
+#        type: number
+#
+#      - name: calender_quarter
+#        sql: calender_quarter
+#        type: number
+#
+#      - name: full_date
+#        sql: full_date
+#        type: time
+#
+#      - name: week_year_combo
+#        sql: week_year_combo
+#        type: string
+#
+#      - name: month_year_combo
+#        sql: month_year_combo
+#        type: string
+#
+#      - name: quarter_year_combo
+#        sql: quarter_year_combo
+#        type: string
+#
+#  - name: dim_date_customer_first_order
+#    sql_table: ocular_reports.dim_date
+#    sql_alias: dim_date_customer_first_order
+#    description: This table contains the dimensional information about the date.
+#    data_source: default
+#
+#    joins: [ ]
+#
+#    dimensions:
+#      - name: calender_year
+#        sql: calender_year
+#        type: number
+#
+#      - name: month
+#        sql: month
+#        type: number
+#
+#      - name: year_week
+#        sql: year_week
+#        type: number
+#
+#      - name: calender_quarter
+#        sql: calender_quarter
+#        type: number
+#
+#      - name: full_date
+#        sql: full_date
+#        type: time
+#        primary_key: true
+#
+#      - name: week_year_combo
+#        sql: week_year_combo
+#        type: string
+#
+#      - name: month_year_combo
+#        sql: month_year_combo
+#        type: string
+#
+#      - name: quarter_year_combo
+#        sql: quarter_year_combo
+#        type: string
+#
+#  - name: dim_date_customer_created
+#    sql_table: ocular_reports.dim_date
+#    sql_alias: dim_date_customer_created
+#    description: This table contains the dimensional information about the date.
+#    data_source: default
+#
+#    joins: [ ]
+#
+#    dimensions:
+#      - name: calender_year
+#        sql: calender_year
+#        type: number
+#
+#      - name: month
+#        sql: month
+#        type: number
+#
+#      - name: year_week
+#        sql: year_week
+#        type: number
+#
+#      - name: calender_quarter
+#        sql: calender_quarter
+#        type: number
+#
+#      - name: full_date
+#        sql: full_date
+#        type: time
+#
+#      - name: week_year_combo
+#        sql: week_year_combo
+#        type: string
+#
+#      - name: month_year_combo
+#        sql: month_year_combo
+#        type: string
+#
+#      - name: quarter_year_combo
+#        sql: quarter_year_combo
+#        type: string
