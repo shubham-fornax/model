@@ -87,7 +87,7 @@ cube(`sales`, {
 
 
      simplified_status: {
-      sql: `${fact_shipping.simplified_status}`,
+      sql: `${fact_shipping_for_sales.simplified_status}`,
       type: `string`
       },
 

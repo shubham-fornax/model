@@ -7,6 +7,11 @@ cube(`dim_customer_profile`, {
        type: `string`,
      },
 
+     first_order_date:{
+       sql: `first_order_date`,
+       type: `string`,
+     },
+
      customer_city: {
        sql: `customer_city`,
        type: `string`,

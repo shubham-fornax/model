@@ -47,7 +47,8 @@
 //    distinct_product_name: {
 //      sql: `distinct product_name`,
 //      type: `string`,
-//      description: `distinct product_name values from the dim_product table.`},
+//      description: `distinct product_name values from the dim_product table.`,
+//      },
 //
 //    category: {
 //        sql: `category`,
@@ -188,7 +189,7 @@
 //      },
 //
 //      order_week: {
-//        sql: `${dim_date_orders.year_week}`,
+//        sql: `${dim_date_orders.year_week_combo}`,
 //        description: ` The week number when the order was placed.  This is extracted from the order_date column and week number is extracted from dim_date.`,
 //        type: `number` ,
 //      },
@@ -224,7 +225,7 @@
 //      },
 //
 //      first_order_week: {
-//        sql: `${dim_date_customer_first_order.year_week}` ,
+//        sql: `${dim_date_customer_first_order.year_week_combo}` ,
 //        description: ` This is the week when the first order was made by that particular customer. It is fetched from dim_customer_profile table and week number is extracted from dim_date table.`,
 //        type: `number` ,
 //      },
@@ -301,7 +302,7 @@
 //      },
 //
 //       retention_week: {
-//        sql: `52*(${dim_date_orders.calender_year} - ${dim_date_customer_first_order.calender_year}) + (${dim_date_orders.year_week} - ${dim_date_customer_first_order.year_week})` ,
+//        sql: `52*(${dim_date_orders.calender_year} - ${dim_date_customer_first_order.calender_year}) + (${dim_date_orders.year_week_combo} - ${dim_date_customer_first_order.year_week_combo})` ,
 //        description: `The number of weeks  between the starting week of the cohort and the order week`,
 //        type: `number` ,
 //      },
@@ -313,7 +314,7 @@
 //      },
 //
 //      age_week_year: {
-//        sql: `${dim_date_customer_first_order.week_year_combo}` ,
+//        sql: `${dim_date_customer_first_order.year_week_combo}` ,
 //        description: ` The week-year extracted from the first order date column. This column contains the cohort definition.`,
 //        type: `string` ,
 //      },
@@ -363,39 +364,17 @@
 //
 //});
 //
-//cube(`dim_products`, {
-//  sql_table: ` thewhitewillow_ocular_raw.dim_products`,
+//cube(`dim_products_for_retention`, {
+//  extends: dim_products,
 //  description: `This cube contains dimensional information about products.`,
 //
 //  dimensions: {
-//    sku:{
-//      sql: `sku`,
-//      description:`sku from dim_products table`,
-//      type: `string`,
-//    },
 //
-//    category:{
-//      sql: `category`,
-//      description:`The category name of the product in the dim_products table`,
-//      type: `string`,
-//    },
-//
-//    product_name:{
-//      sql: `product_name`,
-//      description: `The product name of the product in the dim_products table`,
-//      type: `string`,
-//    },
-//
-//    asin :{
-//      sql: `asin`,
-//      description:`The asin name of the product in the dim_products table`,
-//      type: `string`,
-//    },
-//  }
+//  },
 //});
 //
-//cube(`dim_customer_profile`, {
-//  sql_table: ` thewhitewillow_ocular_production.dim_customer_profile`,
+//cube(`dim_customer_profile_for_retention`, {
+//  extends: dim_customer_profile,
 //  description: `This cube contains relevant dimensional customer info based on the dim_customer_profile table.`,
 //
 //  joins: {
@@ -406,134 +385,26 @@
 //    },
 //
 //    dimensions:{
-//      customer_id: {
-//        sql: `customer_id`,
-//        description: `The customer_id of the product in the dim_products table`,
-//        type: `string`,
-//      },
 //
-//      first_order_date: {
-//        sql: `first_order_date`,
-//        description: `The order date of the first order placed by the customer`,
-//        type: `time`,
-//      },
-//
-//      total_amount_spent_till_date: {
-//        sql: `total_amount_spent_till_date`,
-//        description: `Amount spent by the customer for all orders till today.`,
-//        type: `number`,
-//      },
-//    }
+//    },
 //});
 //
 //cube(`dim_date_orders`, {
-//  sql_table:` thewhitewillow_ocular_raw.dim_date`,
+//  extends: dim_date,
 //  description: `This table contains the dimensional information about the date.`,
 //
 //  dimensions:{
-//    calender_year: {
-//      sql: `calender_year`,
-//      type: `number`,
-//      description: ` The calender year number for the date.`,
-//      },
 //
-//    month: {
-//      sql: `month`,
-//      type: `number`,
-//      description: `The calender month number for the date.`,
-//      },
-//
-//    year_week: {
-//      sql: `year_week`,
-//      type: `number`,
-//      description: ` The calender weak number in a calender year for the date.`,
-//      },
-//
-//    calender_quarter: {
-//      sql: `calender_quarter`,
-//      type: `number`,
-//      description: `The calender quarter number in a calender year for the date.`,
-//      },
-//
-//    full_date: {
-//      sql: `full_date`,
-//      type: `time`,
-//      description: `The calender date.`,
-//      },
-//
-//    week_year_combo: {
-//      sql: `week_year_combo`,
-//      type: `string`,
-//      description: `The week year combination for the date.`,
-//      },
-//
-//    month_year_combo: {
-//      sql: `month_year_combo`,
-//      type: `string`,
-//      description: `The month year combination for the date.`,
-//      },
-//
-//     quarter_year_combo: {
-//      sql: `quarter_year_combo`,
-//      type: `string`,
-//      description: `The quarter year combination for the date.`,
-//      },
-//    }
+//    },
 //});
 ////
 //cube(`dim_date_customer_first_order`, {
-//  sql_table:` thewhitewillow_ocular_raw.dim_date`,
+//  extends: dim_date,
 //  description: `This table contains the dimensional information about the date.`,
 //
 //  dimensions:{
-//    calender_year: {
-//      sql: `calender_year`,
-//      type: `number`,
-//      description: ` The calender year number for the date.`,
-//      },
 //
-//    month: {
-//      sql: `month`,
-//      type: `number`,
-//      description: `The calender month number for the date.`,
-//      },
-//
-//    year_week: {
-//      sql: `year_week`,
-//      type: `number`,
-//      description: ` The calender weak number in a calender year for the date.`,
-//      },
-//
-//    calender_quarter: {
-//      sql: `calender_quarter`,
-//      type: `number`,
-//      description: `The calender quarter number in a calender year for the date.`,
-//      },
-//
-//    full_date: {
-//      sql: `full_date`,
-//      type: `time`,
-//      description: `The calender date.`,
-//      },
-//
-//    week_year_combo: {
-//      sql: `week_year_combo`,
-//      type: `string`,
-//      description: `The week year combination for the date.`,
-//      },
-//
-//    month_year_combo: {
-//      sql: `month_year_combo`,
-//      type: `string`,
-//      description: `The month year combination for the date.`,
-//      },
-//
-//    quarter_year_combo: {
-//      sql: `quarter_year_combo`,
-//      type: `string`,
-//      description: `The quarter year combination for the date.`,
-//      },
-//    }
+//    },
 //});
 //
 //
