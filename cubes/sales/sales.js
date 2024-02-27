@@ -5,6 +5,96 @@ cube(`sales`, {
     daq_duration: {
      sql: `date_diff(current_timestamp(), ${order_date}, day) < 30 `
     },
+
+    today: {
+     sql: `cast(${CUBE}.order_date as date) = current_date()`
+    },
+
+    yesterday: {
+      sql: `cast(${CUBE}.order_date as date) = date_sub(current_date(), interval 1 day)`
+    },
+
+    last_to_last_day: {
+      sql: `cast(${CUBE}.order_date as date) between date_sub(current_date(), interval 2 day) and date_sub(current_date(), interval 1 day)`
+    },
+
+    month_to_date: {
+      sql: `date(${CUBE}.order_date) between date_trunc(current_date(), month) and current_date()`
+    },
+
+    last_month_to_date: {
+      sql: `date(${CUBE}.order_date) between date_sub(date_trunc(current_date(), month), interval 1 month) and  date_sub(current_date(), interval 1 month)`
+    },
+
+    last_to_last_month_to_date: {
+     sql: `date(${CUBE}.order_date) between date_sub(date_trunc(current_date(), month), interval 2 month) and  date_sub(current_date(), interval 2 month)`
+    },
+
+    year_to_date: {
+     sql: `date(${CUBE}.order_date) between date_trunc(current_date(), year) and current_date()`
+    },
+
+    last_year_to_date: {
+     sql: `date(${CUBE}.order_date) between date_sub(date_trunc(current_date(), year), interval 1 year) and  date_sub(current_date(), interval 1 year)`
+    },
+
+    last_to_last_year_to_date: {
+      sql: `date(${CUBE}.order_date) between date_sub(date_trunc(current_date(), year), interval 2 year) and  date_sub(current_date(), interval 2 year)`
+    },
+
+    quarter_to_date: {
+      sql: `date(${CUBE}.order_date)  between date_trunc(current_date(), quarter) and current_date()`,
+    },
+
+    last_quarter_to_date: {
+      sql: `date(${CUBE}.order_date) between date_sub(date_trunc(current_date(), quarter), interval 1 quarter) and date_sub(current_date, interval 1 quarter)`,
+    },
+
+    last_to_last_quarter_to_date: {
+      sql: `date(${CUBE}.order_date) between date_sub(date_trunc(current_date(), quarter), interval 2 quarter) and date_sub(current_date, interval 2 quarter)`,
+    },
+
+    this_week: {
+      sql: `date(${CUBE}.order_date) between date_trunc(current_date(), week) and current_date()`,
+    },
+
+    last_week: {
+      sql: `date(${CUBE}.order_date) between date_sub(date_trunc(current_date(), week), interval 1 week) and date_sub(date_trunc(current_date(), week), interval 1 day)`,
+    },
+
+    last_to_last_week: {
+      sql: `date(${CUBE}.order_date) between date_sub(date_trunc(current_date(), week), interval 2 week) and date_sub(date_sub(date_trunc(current_date(), week), interval 1 day), interval 1 week)`,
+    },
+
+    last_month: {
+      sql: `date(${CUBE}.order_date) between date_sub(date_trunc(current_date(), month), interval 1 month) and date_sub(date_trunc(current_date(), month), interval 1 day)`,
+    },
+
+    last_to_last_month: {
+      sql: `date(${CUBE}.order_date) between date_sub(date_trunc(current_date(), month), interval 2 month) and date_sub(date_sub(date_trunc(current_date(), month), interval 1 day), interval 1 month)`,
+    },
+
+    last_quarter: {
+      sql: `date(${CUBE}.order_date) between date_sub(date_trunc(current_date(), quarter), interval 1 quarter) and date_sub(date_trunc(current_date(), quarter), interval 1 day) `,
+    },
+
+    last_to_last_quarter: {
+      sql: `date(${CUBE}.order_date) between date_sub(date_trunc(current_date(), quarter), interval 2 quarter) and date_sub(date_sub(date_trunc(current_date(), quarter), interval 1 day), interval 1 quarter)`,
+    },
+
+    last_year: {
+      sql: `date(${CUBE}.order_date) between date_sub(date_trunc(current_date(), year), interval 1 year) and date_sub(date_trunc(current_date(), year), interval 1 day) `,
+    },
+
+    last_to_last_year: {
+      sql: `date(${CUBE}.order_date) between date_sub(date_trunc(current_date(), year), interval 2 year) and date_sub(date_sub(date_trunc(current_date(), year), interval 1 day), interval 1 year)`,
+    },
+
+
+
+
+
+
   },
 
 //  pre_aggregations:{
@@ -57,9 +147,9 @@ cube(`sales`, {
       sql: `${CUBE}.sku_name = ${dim_products_for_sales.sku}`,
     },
 
-    dim_pincode: {
+    dim_pincode_for_sales: {
       relationship: `one_to_one`,
-      sql: `${CUBE}.shipping_pincode = cast(${dim_pincode.pincode} as string)`,
+      sql: `${CUBE}.shipping_pincode = cast(${dim_pincode_for_sales.pincode} as string)`,
     },
 
     dim_customer_profile_for_sales: {
@@ -133,7 +223,7 @@ cube(`sales`, {
     confirmed_revenue: {
       sql: `case when round(sum(${CUBE}.item_price), 2) is null then 0 else round(sum(${CUBE}.item_price), 2) end`,
       type: `number`,
-      filters: [{ sql: `max(${fact_shipping_for_sales}.simplified_status) not in ('IN-WH',	'RTO','IN TRANSIT',	'DAMAGED','INCOMPLETE') ` }],
+      filters: [{ sql: `max(${fact_shipping_for_sales}.simplified_status) not in ('RTO',	'DAMAGED','INCOMPLETE') ` }],
     },
 
 //    confirmed_revenue_rn: {
@@ -151,6 +241,11 @@ cube(`sales`, {
       sql: ` case when sum(case when date_diff(current_timestamp, ${CUBE}.order_date, day) > 30 then item_price else 0 end) is null then 0
              else sum(case when date_diff(current_timestamp, ${CUBE}.order_date, day) > 30 then item_price else 0 end) end`,
       type: `number`,
+    },
+
+    booked_orders: {
+      sql: `order_id`,
+      type: `countDistinct`,
     },
 
     booked_order_quantity: {
@@ -174,7 +269,13 @@ cube(`sales`, {
     confirmed_order_quantity: {
       sql: `case when round(sum(item_quantity), 2) is null then 0 else round(sum(item_quantity), 2) end`,
       type: `number`,
-      filters: [{ sql: `max(${fact_shipping_for_sales}.simplified_status) not in ('IN-WH',	'RTO','IN TRANSIT',	'DAMAGED','INCOMPLETE')` }],
+      filters: [{ sql: `max(${fact_shipping_for_sales}.simplified_status) not in (	'RTO',	'DAMAGED','INCOMPLETE')` }],
+    },
+
+    confirmed_orders: {
+      sql: `count(distinct ${CUBE}.order_id)`,
+      type: `number`,
+      filters: [{ sql: `max(${fact_shipping_for_sales}.simplified_status) not in ('RTO','DAMAGED','INCOMPLETE')` }],
     },
 
     recognized_order_quantity: {
@@ -192,7 +293,7 @@ cube(`sales`, {
     confirmed_daily_average_quantity: {
      sql: `case when count(distinct ${CUBE}.order_id) is null then 0 else count(distinct ${CUBE}.order_id)/30 end`,
      type: `number`,
-     filters: [{ sql: `max(${fact_shipping_for_sales}.simplified_status) not in ('IN-WH',	'RTO','IN TRANSIT',	'DAMAGED','INCOMPLETE')` }],
+     filters: [{ sql: `max(${fact_shipping_for_sales}.simplified_status) not in ('RTO',	'DAMAGED','INCOMPLETE')` }],
 
   },
 
@@ -209,6 +310,31 @@ cube(`sales`, {
      filters: [{ sql: `max(${fact_shipping_for_sales}.simplified_status)  in ('RTO')` }],
 
   },
+
+  advertising_cost: {
+    sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
+
+  shipping_cost: {
+    sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
+
+  refund_cost: {
+    sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
+
+  roas: {
+    sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
+
   },
 
 });

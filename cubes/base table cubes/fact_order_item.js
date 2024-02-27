@@ -262,13 +262,13 @@ cube(`fact_order_item`, {
      },
 
      total_cost: {
-       sql: `case when sum(item_cost) != 0 then sum(item_cost) end`,
+       sql: `case when sum(item_cost) != 0 then round(sum(item_cost), 2) else 0 end`,
        type: `number`,
        description: `This is the total cost (COGS) for an SKU over the aggregation period.  Note- in FOI, the item_cost is calculated using actual qty`,
      },
 
      total_tax: {
-       sql: `case when sum(item_tax_total) != 0 then sum(item_tax_total) end`,
+       sql: `case when sum(item_tax_total) != 0 then round(sum(item_tax_total), 2) else 0 end`,
        type: `number`,
      },
 

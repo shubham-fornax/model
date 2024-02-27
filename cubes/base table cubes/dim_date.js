@@ -25,14 +25,26 @@ cube(`dim_date`, {
         type: `string`,
       },
 
+       month: {
+          sql: `month`,
+          type: `number`,
+          description: `The calender month number for the date.`,
+          },
+
       month_year_combo: {
       sql: `month_year_combo`,
       type: `string`,
       description: `The month year combination for the date.`,
       },
 
-      year_week_combo: {
-       sql: `year_week`,
+      year_week: {
+        sql: `year_week`,
+        type: `string`,
+        description: `The week number in the calender year.`,
+      },
+
+      week_year_combo: {
+       sql: `week_year_combo`,
        type: `string`,
        description: `The week year combination for the date.`,
       },
@@ -49,11 +61,13 @@ cube(`dim_date`, {
         description: ` The quarter number in the calender year for the date.`
       },
 
-       month: {
-          sql: `month`,
-          type: `number`,
-          description: `The calender month number for the date.`,
-          },
+      quarter_year_combo: {
+        sql: `quarter_year_combo`,
+        type: `string`,
+        description: `The quarter - year combination as a string.`,
+      },
+
+
 
 
     }
