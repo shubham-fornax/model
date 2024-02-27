@@ -267,6 +267,27 @@ cube(`fact_order_item`, {
        description: `This is the total cost (COGS) for an SKU over the aggregation period.  Note- in FOI, the item_cost is calculated using actual qty`,
      },
 
+     total_orders: {
+       sql: `count(distinct ${CUBE}.order_id)`,
+       type: `number`,
+       description: `Count of distinct order_ids.`
+     },
+
+     total_cgst_amount: {
+       sql: `case when sum(cgst_amount) != 0 then round(sum(cgst_amount), 2) else 0 end`,
+       type: `number`,
+     },
+
+     total_sgst_amount: {
+       sql: `case when sum(sgst_amount) != 0 then round(sum(sgst_amount), 2) else 0 end`,
+       type: `number`,
+     },
+
+     total_igst_amount: {
+       sql: `case when sum(igst_amount) != 0 then round(sum(igst_amount), 2) else 0 end`,
+       type: `number`,
+     },
+
      total_tax: {
        sql: `case when sum(item_tax_total) != 0 then round(sum(item_tax_total), 2) else 0 end`,
        type: `number`,

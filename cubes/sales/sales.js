@@ -223,7 +223,7 @@ cube(`sales`, {
     confirmed_revenue: {
       sql: `case when round(sum(${CUBE}.item_price), 2) is null then 0 else round(sum(${CUBE}.item_price), 2) end`,
       type: `number`,
-      filters: [{ sql: `max(${fact_shipping_for_sales}.simplified_status) not in ('RTO',	'DAMAGED','INCOMPLETE') ` }],
+      filters: [{ sql: `max(${fact_shipping_for_sales}.simplified_status) not in ('RTO', 'DAMAGED','INCOMPLETE') ` }],
     },
 
 //    confirmed_revenue_rn: {
@@ -335,6 +335,77 @@ cube(`sales`, {
     description: `currently set to 0`,
   },
 
+  incoming_freight_amount: {
+    sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
+
+  duties_and_taxes: {
+    sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
+
+  picking_and_packing: {
+    sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
+
+  packing_material: {
+    sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
+
+  shipping_to_customer: {
+    sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
+
+  merchent_fees: {
+    sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
+
+  google_ads_spends: {
+    sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
+
+  meta_ads_spends: {
+    sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
+
+  tiktok_ads_spends: {
+    sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
+
+  people_cost: {
+    sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
+
+  r_and_d: {
+     sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
+
+  g_and_a: {
+     sql: `0`,
+    type: `number`,
+    description: `currently set to 0`,
+  },
   },
 
 });
