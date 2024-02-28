@@ -1,5 +1,5 @@
 cube(`dim_customer_profile`, {
-   sql_table: `thewhitewillow_ocular_production.dim_customer_profile`,
+   sql_table: `${COMPILE_CONTEXT.securityContext.schema_name}_ocular_production.dim_customer_profile`,
 
    dimensions: {
      customer_id : {

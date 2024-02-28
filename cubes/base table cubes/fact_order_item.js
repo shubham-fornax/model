@@ -3,7 +3,7 @@ cube(`fact_order_item`, {
                   *,
                   row_number() OVER (ORDER BY order_date ASC) AS row_number_order_date_asc
                 FROM
-                  thewhitewillow_ocular_production.fact_order_item`,
+                  ${COMPILE_CONTEXT.securityContext.schema_name}_ocular_production.fact_order_item`,
     data_source: `default`,
 
     dimensions: {

@@ -7,9 +7,9 @@ cube(`customer_first_order`, {
         , day_name as day_of_the_week
         , case when day_is_weekday = 1 then 'Weekday' when day_is_weekday = 0 then 'Weekend' end as type_of_day
         , dense_rank() over (partition by customer_id order by order_date asc) as rn
-        from  thewhitewillow_ocular_production.fact_order_item as foi
-        left join  thewhitewillow_ocular_raw.dim_products as dp on foi.sku_name = dp.sku
-        left join  thewhitewillow_ocular_raw.dim_date as dd  on date(foi.order_date) = dd.full_date
+        from  ${COMPILE_CONTEXT.securityContext.schema_name}_ocular_production.fact_order_item as foi
+        left join  ${COMPILE_CONTEXT.securityContext.schema_name}_ocular_raw.dim_products as dp on foi.sku_name = dp.sku
+        left join  ${COMPILE_CONTEXT.securityContext.schema_name}_ocular_raw.dim_date as dd  on date(foi.order_date) = dd.full_date
 
          )
 
@@ -94,7 +94,7 @@ cube(`customer_first_order`, {
 });
 
 cube(`retention`, {
-    sql: `select distinct * from  thewhitewillow_ocular_production.fact_order_item`,
+    sql: `select distinct * from  ${COMPILE_CONTEXT.securityContext.schema_name}_ocular_production.fact_order_item`,
     description: ` This cube contains necessary measure and dimensions for order and customer retention profiles.
       It is built on fact_order_item and the customer level information is fetched by performing a join with the
       dim_customer_profile table, on customer_id.`,

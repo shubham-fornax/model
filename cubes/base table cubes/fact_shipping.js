@@ -1,6 +1,6 @@
 
 cube(`fact_shipping`, {
-   sql_table: `thewhitewillow_ocular_production.fact_shipping`,
+   sql_table: `${COMPILE_CONTEXT.securityContext.schema_name}_ocular_production.fact_shipping`,
 
 
    dimensions: {

@@ -1,5 +1,5 @@
 cube(`dim_products`, {
-  sql_table:`thewhitewillow_ocular_raw.dim_products`,
+  sql_table:`${COMPILE_CONTEXT.securityContext.schema_name}_ocular_raw.dim_products`,
   description: `This table contains the dimensional information about the product.`,
 
 

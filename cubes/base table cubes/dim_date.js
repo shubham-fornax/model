@@ -1,5 +1,5 @@
 cube(`dim_date`, {
-  sql_table:`ocular_reports.dim_date`,
+  sql_table:`${COMPILE_CONTEXT.securityContext.schema_name}_ocular_raw.dim_date`,
   description: `This table contains the dimensional information about the date.`,
 
   dimensions:{

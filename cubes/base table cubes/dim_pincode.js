@@ -1,5 +1,5 @@
 cube(`dim_pincode`, {
-   sql_table: `thewhitewillow_ocular_raw.dim_pincode`,
+   sql_table: `${COMPILE_CONTEXT.securityContext.schema_name}_ocular_raw.dim_pincode`,
 
    dimensions: {
       pincode: {
